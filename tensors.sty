@@ -1,0 +1,48 @@
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+\usepackage{ifthen}
+\usepackage{xparse}
+
+\newenvironment{tensor}{
+	\begin{tikzpicture}[scale=1, >=stealth, positive/.style={fill}, negative/.style={fill=white,thick}]
+		\medmuskip=0mu
+		\thinmuskip=0mu
+		\thickmuskip=0mu
+		\def\xstep{.6}
+		\def\ystep{-.5}
+		\def\radius{.075}
+		\node[font=\itshape\scriptsize, anchor=center] (sym) at (3*\xstep,5*\ystep) {sym.};
+}{
+	\end{tikzpicture}
+}
+
+\NewDocumentCommand{\tensorline}{O{positive} D(){solid} m}{
+	\def\xstep{.6}
+	\def\ystep{-.5}
+	\def\radius{.075}
+	\foreach \yy\xx[count=\ii,evaluate={\iimone=\ii-1}] in {#3} {
+		\coordinate (H\ii) at (\xstep*\xx,\ystep*\yy);
+		\draw[#1] (H\ii) circle (\radius);
+		\begin{scope}[on background layer]
+			\ifthenelse{\equal{\ii}{1}}{}{
+				\draw[thick,#2] (H\ii) -- (H\iimone);
+			}
+		\end{scope}
+	}
+}
+\newcommand\tensorzeros[1]{
+	\def\xstep{.6}
+	\def\ystep{-.5}
+	\foreach \yy\xx in {#1} {
+		\node[font=\scriptsize,anchor=center] (zero) at (\xstep*\xx,\ystep*\yy) {$\approx0$};
+	}
+}
+\newcommand\tensorsingle[1]{
+	\def\xstep{.6}
+	\def\ystep{-.5}
+	\foreach \yy\xx[count=\ii] in {#1} {
+		\coordinate (H\ii) at (\xstep*\xx,\ystep*\yy);
+		\draw[positive] (H\ii) circle (\radius);
+	}
+}
