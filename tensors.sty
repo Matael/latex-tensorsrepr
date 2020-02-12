@@ -5,7 +5,7 @@
 \usepackage{xparse}
 
 \newenvironment{tensor}{
-	\begin{tikzpicture}[scale=1, >=stealth, positive/.style={fill}, negative/.style={fill=white,thick}]
+	\begin{tikzpicture}[positive/.style={fill}, negative/.style={fill=white,thick}]
 		\medmuskip=0mu
 		\thinmuskip=0mu
 		\thickmuskip=0mu
@@ -31,6 +31,20 @@
 		\end{scope}
 	}
 }
+\NewDocumentCommand{\tensorlinesign}{D(){solid} m}{
+	\def\xstep{.6}
+	\def\ystep{-.5}
+	\def\radius{.075}
+	\foreach \yy/\xx/\sign[count=\ii,evaluate={\iimone=\ii-1}] in {#2} {
+		\coordinate (H\ii) at (\xstep*\xx,\ystep*\yy);
+		\draw[\sign] (H\ii) circle (\radius);
+		\begin{scope}[on background layer]
+			\ifthenelse{\equal{\ii}{1}}{}{
+				\draw[thick,#1] (H\ii) -- (H\iimone);
+			}
+		\end{scope}
+	}
+}
 \newcommand\tensorzeros[1]{
 	\def\xstep{.6}
 	\def\ystep{-.5}
@@ -38,15 +52,34 @@
 		\node[font=\scriptsize,anchor=center] (zero) at (\xstep*\xx,\ystep*\yy) {$\approx0$};
 	}
 }
-\newcommand\tensorsingle[1]{
+\newcommand\tensorsingle[2][positive]{
 	\def\xstep{.6}
 	\def\ystep{-.5}
-	\foreach \yy\xx[count=\ii] in {#1} {
+	\foreach \yy\xx[count=\ii] in {#2} {
 		\coordinate (H\ii) at (\xstep*\xx,\ystep*\yy);
-		\draw[positive] (H\ii) circle (\radius);
+		\draw[#1] (H\ii) circle (\radius);
 	}
 }
 \newcommand\tensorbrackets{
 	\draw (.7*\xstep,.5*\ystep) -- (.4*\xstep,.5*\ystep) -- (.4*\xstep,6.5*\ystep) -- (.7*\xstep,6.5*\ystep);
 	\draw (6.3*\xstep,.5*\ystep) -- (6.6*\xstep,.5*\ystep) -- (6.6*\xstep,6.5*\ystep) -- (6.3*\xstep,6.5*\ystep);
+}
+\newcommand\tensorlegend[2][unbind]{
+	\def\radius{.075}
+	\tikz[baseline=-.7ex, positive/.style={fill}, negative/.style={fill=white,thick}]{
+		\draw[#2] (0,0) circle (\radius);
+		\ifthenelse{\equal{#1}{bind}}{
+			\draw[#2] (.5,0) circle (\radius);
+			\begin{scope}[on background layer]\draw[thick] (0,0) -- (.5,0);\end{scope}
+		}{
+		\ifthenelse{\equal{#1}{different}}{
+			\ifthenelse{\equal{#2}{negative}}{
+				\draw[positive] (.5,0) circle (\radius);
+			}{
+				\draw[negative] (.5,0) circle (\radius);
+			}
+			\begin{scope}[on background layer]\draw[thick] (0,0) -- (.5,0);\end{scope}
+		}{}
+		}
+	}
 }
