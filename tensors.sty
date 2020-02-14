@@ -45,11 +45,16 @@
 		\end{scope}
 	}
 }
-\newcommand\tensorzeros[1]{
+\newcommand\tensorzeros[2][dots]{
 	\def\xstep{.6}
 	\def\ystep{-.5}
-	\foreach \yy\xx in {#1} {
-		\node[font=\scriptsize,anchor=center] (zero) at (\xstep*\xx,\ystep*\yy) {$\approx0$};
+	\def\radius{.075}
+	\foreach \yy\xx in {#2} {
+		\ifthenelse{\equal{#1}{maths}}{
+			\node[font=\scriptsize,anchor=center] (zero) at (\xstep*\xx,\ystep*\yy) {$\approx0$};
+		}{
+			\draw (\xstep*\xx,\ystep*\yy) circle (0.2*\radius);
+		}
 	}
 }
 \newcommand\tensorsingle[2][positive]{
